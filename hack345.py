@@ -10,7 +10,7 @@ def recognize_speech():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
         print("Listening...")
-        audio = recognizer.listen(source)
+        audio = recognizer.listen(source, timeout=600)  # Setting timeout to 10 minutes (600 seconds)
     try:
         text = recognizer.recognize_google(audio, language='en')
         print("You said:", text)
@@ -42,13 +42,14 @@ def main():
     while True:
         input_text = recognize_speech()
         if input_text:
-            target_language = input("Enter the target language (e.g., Hindi, English): ").strip().lower()
-            if target_language in languages:
-                translated_text = translate_text(input_text, target_language=languages[target_language])
-                print("Translated text:", translated_text)
-                text_to_speech(translated_text, language=languages[target_language])
-            else:
-                print("Language not supported. Please choose from the supported languages.")
+            # Check if input text is in English and not longer than 10 minutes
+            if len(input_text) > 10 * 60:  # Check if text length exceeds 10 minutes in seconds
+                print("Input text exceeds 10 minutes. Please speak shorter sentences.")
+                continue
+            target_language = 'hindi'
+            translated_text = translate_text(input_text, target_language)
+            print("Translated text:", translated_text)
+            text_to_speech(translated_text, language='hi')
 
 if __name__ == "__main__":
     main()
